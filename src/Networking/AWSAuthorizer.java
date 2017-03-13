@@ -6,10 +6,13 @@
 package Networking;
 
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -63,7 +66,11 @@ public class AWSAuthorizer {
     public String getSecret() {
         return secret;
     }
-
+    @Override
+    public String toString()
+    {
+        return "Token: " + token + "\nSecret: " + secret + "\naccesskey: " + accessKey;
+    } 
     public String getToken() {
         return token;
     }
@@ -82,11 +89,15 @@ public class AWSAuthorizer {
     {
         Client client = ClientBuilder.newClient();
         String result = client.target(tmpAccessUrlFull).request(MediaType.APPLICATION_JSON).get(String.class);
+        try{
         JSONObject jsonResult = new JSONObject(result);
         JSONObject credentials = jsonResult.getJSONObject("AssumeRoleWithWebIdentityResponse").getJSONObject("AssumeRoleWithWebIdentityResult").getJSONObject("Credentials");
         secret = credentials.getString("SecretAccessKey");
         accessKey = credentials.getString("AccessKeyId");
-        token = credentials.getString("SessionToken");
+            token = credentials.getString("SessionToken");
+        } catch (JSONException ex) {
+            Logger.getLogger(AWSAuthorizer.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     //Connects to the javabog authorizer and requests token
@@ -94,8 +105,12 @@ public class AWSAuthorizer {
     {
          Client client = ClientBuilder.newClient();
          JSONObject loginCredentials = new JSONObject();
+         try {
          loginCredentials.put("username", username);
-         loginCredentials.put("password", password);
+            loginCredentials.put("password", password);
+        } catch (JSONException ex) {
+            Logger.getLogger(AWSAuthorizer.class.getName()).log(Level.SEVERE, null, ex);
+        }
          try{
             CryptoInformation crypto = new CryptoInformation();
             crypto = client.target(authpoint).request(MediaType.APPLICATION_JSON).header("Content-Type", "application/json")

@@ -85,6 +85,7 @@ public class AWSClient {
        AWSAuthorizer authorizer;
        public boolean login(String username, String password){
            authorizer = new AWSAuthorizer(username, password);
+           System.out.println(authorizer.toString());
            return true;
        }
        public static void main(String[] args){
@@ -119,12 +120,12 @@ public class AWSClient {
                     e.printStackTrace();
                 }
         }
-	public void GET(){
+	public String GET(){
 		Client client = ClientBuilder.newClient();     
                 String uri = target.getFullPath();
                 Invocation.Builder target = client.target("https://" + uri).request(MediaType.APPLICATION_JSON);
                 try{
-                      System.out.println(setAWSHeader(target, "", "GET").get(String.class));
+                      return setAWSHeader(target, "", "GET").get(String.class);
                 }
                 catch(javax.ws.rs.ForbiddenException e)
                 {
@@ -133,6 +134,7 @@ public class AWSClient {
                 catch(Exception e){
                     e.printStackTrace();
                 }
+                return null;
 	}
         
 	
