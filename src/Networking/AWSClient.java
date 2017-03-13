@@ -35,7 +35,8 @@ class Crypto{
         /**
 	 
 	 Begin copy from: http://docs.aws.amazon.com/general/latest/gr/signature-v4-examples.html#signature-v4-examples-java
-	 
+	 Dato: 14/3/2017 kl. 00:34
+         * 
 	 */
 	
 	public static byte[] HmacSHA256(String data, byte[] key) throws Exception {
@@ -91,7 +92,14 @@ public class AWSClient {
            AWSClient client = new AWSClient();
            client.login("s153255", "kode");
            client.SetTarget(new URL(" https://70r7hyxz72.execute-api.eu-west-1.amazonaws.com/development/tasks"));
-           client.POST("");
+           client.POST("{\n" +
+"    \"price\" : 22,\n" +
+"    \"ETC\" : 1,\n" +
+"    \"views\" : 122,\n" +
+"    \"zipaddress\" : 50,\n" +
+"    \"ID\" : \"Testing\"\n" +
+"    \n" +
+"}");
        }
        
        
@@ -109,7 +117,8 @@ public class AWSClient {
                 String uri = target.getFullPath();
                 Invocation.Builder target = client.target("https://" + uri).request(MediaType.APPLICATION_JSON);
                 try{
-                      System.out.println(setAWSHeader(target, data, "POST").get(String.class));
+                    System.out.println(authorizer.toString());
+                      System.out.println("Identity: " + setAWSHeader(target, data, "POST").post(Entity.json(data), String.class));
                 }
                 catch(javax.ws.rs.ForbiddenException e)
                 {
