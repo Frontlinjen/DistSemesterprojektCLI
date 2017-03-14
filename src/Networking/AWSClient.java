@@ -86,21 +86,13 @@ public class AWSClient {
        AWSAuthorizer authorizer;
        public boolean login(String username, String password){
            authorizer = new AWSAuthorizer(username, password);
-           System.out.println(authorizer.toString());
            return true;
        }
        public static void main(String[] args){
            AWSClient client = new AWSClient();
            client.login("s153255", "kode");
-           client.SetTarget(new URL(" https://70r7hyxz72.execute-api.eu-west-1.amazonaws.com/development/tasks"));
-           client.POST("{\n" +
-"    \"price\" : 22,\n" +
-"    \"ETC\" : 1,\n" +
-"    \"views\" : 122,\n" +
-"    \"zipaddress\" : 50,\n" +
-"    \"ID\" : \"Testing\"\n" +
-"    \n" +
-"}");
+           client.SetTarget(new URL(" https://70r7hyxz72.execute-api.eu-west-1.amazonaws.com/development/tasks/9"));
+           System.out.println(client.GET());
        }
        
        
