@@ -25,7 +25,8 @@ public class AmazonConsole {
      */
     public static void main(String[] args) {
         AWSClient awsClient = new AWSClient();
-        awsClient.SetTarget(new URL("https://70r7hyxz72.execute-api.eu-west-1.amazonaws.com/development/tasks"));
+        String url = "https://70r7hyxz72.execute-api.eu-west-1.amazonaws.com/development/tasks";
+        awsClient.SetTarget(new URL(url));
         
         Scanner scanner = new Scanner(System.in);
         boolean loggedIn = false;
@@ -55,11 +56,9 @@ public class AmazonConsole {
                 switch(selection){
                     case "1":{
                         JSONObject newTask = new JSONObject();
-                        String title, description, ECT, street, creatorid;
+                        String title, description, street;
                         float price;
-                        int views, zipaddress;
-                        boolean urgent, supplies;
-                        int[] tags;
+                        int zipaddress, urgent, supplies, ETC;
                         System.out.println("Create new task:");
                         boolean created = false;
                         while(!created){
@@ -72,31 +71,24 @@ public class AmazonConsole {
                                 System.out.println("Price:");
                                 price = scanner.nextFloat();
                                 System.out.println("ECT:");
-                                ECT = scanner.next();
+                                ETC = scanner.nextInt();
                                 System.out.println("Supplies:");
-                                supplies = scanner.nextBoolean();
+                                supplies = scanner.nextInt();
                                 System.out.println("Urgent:");
-                                urgent = scanner.nextBoolean();
+                                urgent = scanner.nextInt();
                                 System.out.println("Street:");
                                 street = scanner.next();  
                                 System.out.println("ZipAddress:");
                                 zipaddress = scanner.nextInt();
-                                System.out.println("Number of tags:");
-                                int tagCount = scanner.nextInt();
-                                tags = new int[tagCount];
-                                for(int i = 0; i < tagCount; i++){
-                                    tags[i] = scanner.nextInt();
-                                }
                                 try {
                                     newTask.put("title", title);
                                     newTask.put("description", description);
                                     newTask.put("price", price);
-                                    newTask.put("ECT", ECT);
+                                    newTask.put("ETC", ETC);
                                     newTask.put("supplies", supplies);
                                     newTask.put("urgent", urgent);
                                     newTask.put("street", street);
                                     newTask.put("zipaddress", zipaddress);
-                                    newTask.put("tags", tags);
                                     System.out.println(newTask.toString());
                                     awsClient.POST(newTask.toString());
                                 } catch (JSONException ex) {
@@ -155,21 +147,29 @@ public class AmazonConsole {
                     break;
                     }*/
                     case "2":{
+                    String ID;
+                    System.out.println("Select ID");
+                    ID = scanner.next();
                     try {
-                        JSONObject response = new JSONObject(awsClient.GET());
+                        awsClient.SetTarget(new URL(url + "/" + ID + "/"));
+                        String res = awsClient.GET();
+                        System.out.println(res);
+                        JSONObject response = new JSONObject(res);
                         
                         System.out.println("title: " + response.getString("title"));
                         System.out.println("description: " + response.getString("description"));
                         System.out.println("price: " + response.getDouble("price"));
-                        System.out.println("ECT: " + response.getString("ECT"));
+                        System.out.println("ETC: " + response.getInt("ETC"));
                         System.out.println("supplies: " + response.getBoolean("supplies"));
                         System.out.println("urgent: " + response.getBoolean("urgent"));
                         System.out.println("views: " + response.getInt("views"));
                         System.out.println("street: " + response.getString("street"));
                         System.out.println("zipaddress: " + response.getInt("zipaddress"));
-                        System.out.println("tags: " + response.getJSONArray("tags"));
                     } catch (JSONException ex) {
                         Logger.getLogger(AmazonConsole.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    finally{
+                    awsClient.SetTarget(new URL(url));
                     }
                     break;
                     }
